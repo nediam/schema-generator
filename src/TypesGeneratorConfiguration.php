@@ -171,6 +171,8 @@ final class TypesGeneratorConfiguration implements ConfigurationInterface
                                     ->children()
                                         ->scalarNode('range')->defaultNull()->info('The property range')->example('Offer')->end()
                                         ->scalarNode('relationTableName')->defaultNull()->info('The relation table name')->example('organization_member')->end()
+                                        ->scalarNode('inversedBy')->defaultNull()->info('The inversedBy attribute designates the field in the entity that is the inverse side of the relationship')->example('events')->end()
+                                        ->scalarNode('mappedBy')->defaultNull()->info('The mappedBy attribute specifies the property name on the targetEntity that is the owning side of this relation')->example('attendees')->end()
                                         ->enumNode('cardinality')->defaultValue(CardinalitiesExtractor::CARDINALITY_UNKNOWN)->values([
                                             CardinalitiesExtractor::CARDINALITY_0_1,
                                             CardinalitiesExtractor::CARDINALITY_0_N,

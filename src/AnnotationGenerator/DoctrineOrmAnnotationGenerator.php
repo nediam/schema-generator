@@ -67,6 +67,14 @@ final class DoctrineOrmAnnotationGenerator extends AbstractAnnotationGenerator
         if (isset($this->config['types'][$className]['properties'][$fieldName])) {
             $field['relationTableName'] = $this->config['types'][$className]['properties'][$fieldName]['relationTableName'];
         }
+        $field['inversedBy'] = null;
+        if (isset($this->config['types'][$className]['properties'][$fieldName])) {
+            $field['inversedBy'] = $this->config['types'][$className]['properties'][$fieldName]['inversedBy'];
+        }
+        $field['mappedBy'] = null;
+        if (isset($this->config['types'][$className]['properties'][$fieldName])) {
+            $field['mappedBy'] = $this->config['types'][$className]['properties'][$fieldName]['mappedBy'];
+        }
 
         if ($field['isEnum']) {
             $type = $field['isArray'] ? 'simple_array' : 'string';
@@ -174,7 +182,16 @@ final class DoctrineOrmAnnotationGenerator extends AbstractAnnotationGenerator
                     $annotations[] = '@ORM\JoinTable('.$name.'inverseJoinColumns={@ORM\JoinColumn(nullable=false, unique=true)})';
                     break;
                 case CardinalitiesExtractor::CARDINALITY_N_N:
-                    $annotations[] = sprintf('@ORM\ManyToMany(targetEntity="%s")', $this->getRelationName($field['range']));
+                    $annotation = '@ORM\ManyToMany(';
+                    $annotation .= sprintf('targetEntity="%s"', $this->getRelationName($field['range']));
+                    if ($field['inversedBy']) {
+                        $annotation .= sprintf(', inversedBy="%s"', $field['inversedBy']);
+                    }
+                    if ($field['mappedBy']) {
+                        $annotation .= sprintf(', mappedBy="%s"', $field['mappedBy']);
+                    }
+                    $annotation .= ')';
+                    $annotations[] = $annotation;
                     if ($field['relationTableName']) {
                         $annotations[] = sprintf('@ORM\JoinTable(name="%s")', $field['relationTableName']);
                     }
